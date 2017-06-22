@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/aop
+ 	http://www.springframework.org/schema/aop/spring-aop.xsd
+ 	http://www.springframework.org/schema/context
+ 	http://www.springframework.org/schema/context/spring-context.xsd">
+ 	
+	<context:annotation-config />
+	<context:component-scan base-package="wpbn.pgis" />
+	<context:component-scan base-package="wpbn.pgis.service"/>
+	<context:property-placeholder location="classpath:jdbc.properties" />
+	
+	
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass" value="${jdbc.driverClassName}" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+	
+	
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="/WEB-INF/myBatisConfig.xml" />  
+		<property name="dataSource" ref="dataSource" />
+	</bean> 
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="wpbn.pgis.dao" />
+	</bean>
+	
+
+	<aop:config>
+		<aop:pointcut id="serviceMethods" expression="execution(* wpbn.pgis.service*.*(..))" />
+
+	</aop:config>
+
+</beans>
